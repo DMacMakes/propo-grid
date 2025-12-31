@@ -5,7 +5,7 @@ let offsetX = 0, offsetY = 0;
 let lastPinchDist = null;
 
 function preload() {
-  img = loadImage("your-image.png"); // put your image in the repo
+  img = loadImage("haley_kick.jpg"); // put your image in the repo
 }
 
 function setup() {
