@@ -28,13 +28,13 @@ function setup() {
   // Create a canvas that is larger than the window if needed
   const c = createCanvas(windowWidth, windowHeight);
   // Make canvas scrollable
-  c.elt.style.display = 'block';
+ /* c.elt.style.display = 'block';
   c.elt.style.position = 'relative';
   c.elt.style.maxWidth = 'none';
   c.elt.style.maxHeight = 'none';
   c.elt.style.width = img ? img.width + 'px' : '100vw';
   c.elt.style.height = img ? img.height + 'px' : '100vh';
-  c.elt.style.overflow = 'auto';
+  c.elt.style.overflow = 'auto'; */
 
     // Setup image loader
   const imageLoader = document.getElementById('image-loader');
