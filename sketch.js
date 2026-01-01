@@ -1,3 +1,5 @@
+
+
 let img;
 let zoom = 1;
 
@@ -10,7 +12,7 @@ let lastPinchDist = null;
 let gridStrokeWeight = 3;
 let gridRows = 5;
 let gridCols = 5;
-let gridOpacity = 32; // 0-100 percent
+let gridOpacity = 80; // 0-100 percent
 let gridColor = [255, 0, 255]; // default magenta
 let gridColorPicker;
 
@@ -33,6 +35,32 @@ function setup() {
   c.elt.style.width = img ? img.width + 'px' : '100vw';
   c.elt.style.height = img ? img.height + 'px' : '100vh';
   c.elt.style.overflow = 'auto';
+
+    // Setup image loader
+  const imageLoader = document.getElementById('image-loader');
+  if (imageLoader) {
+    imageLoader.addEventListener('change', function(e) {
+      if (e.target.files && e.target.files[0]) {
+        const file = e.target.files[0];
+        const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+        if (validTypes.includes(file.type)) {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            loadImage(ev.target.result, function(loadedImg) {
+              img = loadedImg;
+              // Optionally, reset zoom and offset to fit new image
+              zoom = 1;
+              offsetX = 0;
+              offsetY = 0;
+              // Optionally, resize canvas to fit new image
+              resizeCanvas(windowWidth, windowHeight);
+            });
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+    });
+  }
 
   // Setup stroke weight slider
   const slider = document.getElementById('stroke-slider');
@@ -62,6 +90,32 @@ function setup() {
     sliderValue.textContent = slider.value;
   }
 
+   // Setup columns slider
+  const colsSlider = document.getElementById('cols-slider');
+  const colsValue = document.getElementById('cols-value');
+  if (colsSlider && colsValue) {
+    colsSlider.addEventListener('input', function() {
+      gridCols = parseInt(this.value);
+      colsValue.textContent = this.value;
+    });
+    colsSlider.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      let val = parseInt(this.value);
+      if (e.deltaY > 0) {
+        val = Math.min(20, val + 1);
+      } else if (e.deltaY < 0) {
+        val = Math.max(1, val - 1);
+      }
+      if (val !== parseInt(this.value)) {
+        this.value = val;
+        gridCols = val;
+        colsValue.textContent = val;
+        this.dispatchEvent(new Event('input', {bubbles: true}));
+      }
+    });
+    gridCols = parseInt(colsSlider.value);
+    colsValue.textContent = colsSlider.value;
+
   // Setup rows slider
   const rowsSlider = document.getElementById('rows-slider');
   const rowsValue = document.getElementById('rows-value');
@@ -89,32 +143,7 @@ function setup() {
     gridRows = parseInt(rowsSlider.value);
     rowsValue.textContent = rowsSlider.value;
   }
-
-  // Setup columns slider
-  const colsSlider = document.getElementById('cols-slider');
-  const colsValue = document.getElementById('cols-value');
-  if (colsSlider && colsValue) {
-    colsSlider.addEventListener('input', function() {
-      gridCols = parseInt(this.value);
-      colsValue.textContent = this.value;
-    });
-    colsSlider.addEventListener('wheel', function(e) {
-      e.preventDefault();
-      let val = parseInt(this.value);
-      if (e.deltaY > 0) {
-        val = Math.min(20, val + 1);
-      } else if (e.deltaY < 0) {
-        val = Math.max(1, val - 1);
-      }
-      if (val !== parseInt(this.value)) {
-        this.value = val;
-        gridCols = val;
-        colsValue.textContent = val;
-        this.dispatchEvent(new Event('input', {bubbles: true}));
-      }
-    });
-    gridCols = parseInt(colsSlider.value);
-    colsValue.textContent = colsSlider.value;
+ 
 
     // Create color picker and insert above opacity slider
     gridColorPicker = createColorPicker(color(gridColor[0], gridColor[1], gridColor[2]));
@@ -156,6 +185,40 @@ function setup() {
       gridOpacity = parseInt(opacitySlider.value);
       opacityValue.textContent = opacitySlider.value;
     }
+  }
+
+  // Add a save button here that allows the user to save the loaded image plus its grid overlay as a new image file.
+  const saveButton = document.createElement('button');
+  saveButton.textContent = 'Save Image with Grid';
+  saveButton.style.display = 'block';
+  saveButton.style.marginTop = '12px';
+  saveButton.addEventListener('click', function() {
+    // Create a graphics buffer to draw the image and grid
+    let pg = createGraphics(img.width, img.height);
+    pg.image(img, 0, 0);
+
+    // Draw grid on the graphics buffer
+    let alpha = Math.round(gridOpacity * 2.55); // map 0-100 to 0-255
+    let linecol = pg.color(gridColor[0], gridColor[1], gridColor[2], alpha);
+    pg.stroke(linecol);
+    pg.strokeWeight(gridStrokeWeight);
+    let rowStep = img.height / gridRows;
+    let colStep = img.width / gridCols;
+    for (let x = 0; x <= img.width; x += colStep) {
+      pg.line(x, 0, x, img.height);
+    }
+    for (let y = 0; y <= img.height; y += rowStep) {
+      pg.line(0, y, img.width, y);
+    }
+
+    // prompt the user for an image name
+    let imageName = prompt("Enter image name:", "image_with_grid");
+    // Save the graphics buffer as an image
+    save(pg, imageName + '.png');
+  });
+  const dialogueBox = document.getElementById('dialogue-box');
+  if (dialogueBox) {
+    dialogueBox.appendChild(saveButton);
   }
 }
 
