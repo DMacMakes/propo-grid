@@ -16,14 +16,43 @@
 
     <script src="libraries/p5.sound.min.js"></script>
     <script src="sketch.js"></script>
+    <link rel="stylesheet" href="dialogue.css">
     <style>
       body, html {
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        overflow: auto;
         touch-action: none; /* important for iOS pinch + pan */
+      }
+      canvas {
+        display: block;
+        position: relative;
+        max-width: none;
+        max-height: none;
       }
     </style>
  </head>
-  <body></body>
+  <body>
+    <div id="dialogue-box">
+      <label for="stroke-slider">Grid Stroke Weight:
+        <span class="slider-value" id="slider-value">3</span>
+      </label>
+      <input type="range" min="1" max="6" step="1" value="3" id="stroke-slider">
+      <br><br>
+      <label for="rows-slider">Rows:
+        <span class="slider-value" id="rows-value">5</span>
+      </label>
+      <input type="range" min="1" max="20" step="1" value="5" id="rows-slider">
+      <br><br>
+      <label for="cols-slider">Columns:
+        <span class="slider-value" id="cols-value">5</span>
+      </label>
+      <input type="range" min="1" max="20" step="1" value="5" id="cols-slider">
+      <br><br>
+      <label for="opacity-slider">Grid Opacity:
+        <span class="slider-value" id="opacity-value">32</span>
+      </label>
+      <input type="range" min="0" max="100" step="1" value="32" id="opacity-slider">
+    </div>
+  </body>
 </html>

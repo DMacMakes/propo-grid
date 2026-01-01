@@ -1,0 +1,30 @@
+/*
+style for floating dialogue box and slider
+*/
+#dialogue-box {
+  position: fixed;
+  top: 32px;
+  right: 32px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  padding: 20px 24px 16px 24px;
+  z-index: 1000;
+  min-width: 220px;
+  font-family: sans-serif;
+}
+#dialogue-box label {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+#dialogue-box input[type=range] {
+  width: 100%;
+  margin: 8px 0 0 0;
+}
+#dialogue-box .slider-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
