@@ -1,5 +1,3 @@
-
-
 let img;
 let zoom = 1;
 
@@ -16,7 +14,12 @@ let gridOpacity = 80; // 0-100 percent
 let gridColor = [255, 0, 255]; // default magenta
 let gridColorPicker;
 
-
+// Margin variables (pixels)
+let marginTop = 0;
+let marginLeft = 0;
+let marginRight = 0;
+let marginBottom = 0;
+let linkMargins = false;
   
 
 function preload() {
@@ -187,6 +190,159 @@ function setup() {
     }
   }
 
+  // Setup margin sliders
+  const marginTopSlider = document.getElementById('margin-top-slider');
+  const marginTopValue = document.getElementById('margin-top-value');
+  const marginLeftSlider = document.getElementById('margin-left-slider');
+  const marginLeftValue = document.getElementById('margin-left-value');
+  const marginRightSlider = document.getElementById('margin-right-slider');
+  const marginRightValue = document.getElementById('margin-right-value');
+  const marginBottomSlider = document.getElementById('margin-bottom-slider');
+  const marginBottomValue = document.getElementById('margin-bottom-value');
+  const linkMarginsCheckbox = document.getElementById('link-margins-checkbox');
+
+  function setAllMargins(val) {
+    marginTop = marginLeft = marginRight = marginBottom = val;
+    marginTopValue.textContent = val;
+    marginLeftValue.textContent = val;
+    marginRightValue.textContent = val;
+    marginBottomValue.textContent = val;
+    marginLeftSlider.value = val;
+    marginRightSlider.value = val;
+    marginBottomSlider.value = val;
+  }
+
+  if (linkMarginsCheckbox) {
+    // Get parent containers for sliders
+    const leftContainer = marginLeftSlider.parentElement;
+    const rightContainer = marginRightSlider.parentElement;
+    const bottomContainer = marginBottomSlider.parentElement;
+
+    linkMarginsCheckbox.addEventListener('change', function() {
+      linkMargins = this.checked;
+      if (linkMargins) {
+        setAllMargins(parseInt(marginTopSlider.value));
+        leftContainer.style.display = 'none';
+        rightContainer.style.display = 'none';
+        bottomContainer.style.display = 'none';
+      } else {
+        leftContainer.style.display = '';
+        rightContainer.style.display = '';
+        bottomContainer.style.display = '';
+      }
+    });
+    linkMargins = linkMarginsCheckbox.checked;
+    if (linkMargins) {
+      leftContainer.style.display = 'none';
+      rightContainer.style.display = 'none';
+      bottomContainer.style.display = 'none';
+    }
+  }
+
+  if (marginTopSlider && marginTopValue) {
+    marginTopSlider.addEventListener('input', function() {
+      if (linkMarginsCheckbox && linkMarginsCheckbox.checked) {
+        setAllMargins(parseInt(this.value));
+      } else {
+        marginTop = parseInt(this.value);
+        marginTopValue.textContent = this.value;
+      }
+    });
+    marginTopSlider.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      let val = parseInt(this.value);
+      if (e.deltaY > 0) {
+        val = Math.min(500, val + 1);
+      } else if (e.deltaY < 0) {
+        val = Math.max(0, val - 1);
+      }
+      if (val !== parseInt(this.value)) {
+        this.value = val;
+        if (linkMarginsCheckbox && linkMarginsCheckbox.checked) {
+          setAllMargins(val);
+        } else {
+          marginTop = val;
+          marginTopValue.textContent = val;
+        }
+        this.dispatchEvent(new Event('input', {bubbles: true}));
+      }
+    });
+    marginTop = parseInt(marginTopSlider.value);
+    marginTopValue.textContent = marginTopSlider.value;
+  }
+
+  if (marginLeftSlider && marginLeftValue) {
+    marginLeftSlider.addEventListener('input', function() {
+      marginLeft = parseInt(this.value);
+      marginLeftValue.textContent = this.value;
+    });
+    marginLeftSlider.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      let val = parseInt(this.value);
+      if (e.deltaY > 0) {
+        val = Math.min(500, val + 1);
+      } else if (e.deltaY < 0) {
+        val = Math.max(0, val - 1);
+      }
+      if (val !== parseInt(this.value)) {
+        this.value = val;
+        marginLeft = val;
+        marginLeftValue.textContent = val;
+        this.dispatchEvent(new Event('input', {bubbles: true}));
+      }
+    });
+    marginLeft = parseInt(marginLeftSlider.value);
+    marginLeftValue.textContent = marginLeftSlider.value;
+  }
+
+  if (marginRightSlider && marginRightValue) {
+    marginRightSlider.addEventListener('input', function() {
+      marginRight = parseInt(this.value);
+      marginRightValue.textContent = this.value;
+    });
+    marginRightSlider.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      let val = parseInt(this.value);
+      if (e.deltaY > 0) {
+        val = Math.min(500, val + 1);
+      } else if (e.deltaY < 0) {
+        val = Math.max(0, val - 1);
+      }
+      if (val !== parseInt(this.value)) {
+        this.value = val;
+        marginRight = val;
+        marginRightValue.textContent = val;
+        this.dispatchEvent(new Event('input', {bubbles: true}));
+      }
+    });
+    marginRight = parseInt(marginRightSlider.value);
+    marginRightValue.textContent = marginRightSlider.value;
+  }
+
+  if (marginBottomSlider && marginBottomValue) {
+    marginBottomSlider.addEventListener('input', function() {
+      marginBottom = parseInt(this.value);
+      marginBottomValue.textContent = this.value;
+    });
+    marginBottomSlider.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      let val = parseInt(this.value);
+      if (e.deltaY > 0) {
+        val = Math.min(500, val + 1);
+      } else if (e.deltaY < 0) {
+        val = Math.max(0, val - 1);
+      }
+      if (val !== parseInt(this.value)) {
+        this.value = val;
+        marginBottom = val;
+        marginBottomValue.textContent = val;
+        this.dispatchEvent(new Event('input', {bubbles: true}));
+      }
+    });
+    marginBottom = parseInt(marginBottomSlider.value);
+    marginBottomValue.textContent = marginBottomSlider.value;
+  }
+
   // Add a save button here that allows the user to save the loaded image plus its grid overlay as a new image file.
   const saveButton = document.createElement('button');
   saveButton.textContent = 'Save Image with Grid';
@@ -197,18 +353,24 @@ function setup() {
     let pg = createGraphics(img.width, img.height);
     pg.image(img, 0, 0);
 
-    // Draw grid on the graphics buffer
+    // Draw grid on the graphics buffer with margins
     let alpha = Math.round(gridOpacity * 2.55); // map 0-100 to 0-255
     let linecol = pg.color(gridColor[0], gridColor[1], gridColor[2], alpha);
     pg.stroke(linecol);
     pg.strokeWeight(gridStrokeWeight);
-    let rowStep = img.height / gridRows;
-    let colStep = img.width / gridCols;
-    for (let x = 0; x <= img.width; x += colStep) {
-      pg.line(x, 0, x, img.height);
+    let gridLeft = marginLeft;
+    let gridTop = marginTop;
+    let gridRight = img.width - marginRight;
+    let gridBottom = img.height - marginBottom;
+    let gridWidth = gridRight - gridLeft;
+    let gridHeight = gridBottom - gridTop;
+    let rowStep = gridHeight / gridRows;
+    let colStep = gridWidth / gridCols;
+    for (let x = gridLeft; x <= gridRight + 0.1; x += colStep) {
+      pg.line(x, gridTop, x, gridBottom);
     }
-    for (let y = 0; y <= img.height; y += rowStep) {
-      pg.line(0, y, img.width, y);
+    for (let y = gridTop; y <= gridBottom + 0.1; y += rowStep) {
+      pg.line(gridLeft, y, gridRight, y);
     }
 
     // prompt the user for an image name
@@ -232,21 +394,27 @@ function draw() {
   if (img) {
     image(img, 0, 0);
 
-    // draw grid
+    // draw grid with margins
     let alpha = Math.round(gridOpacity * 2.55); // map 0-100 to 0-255
     let linecol = color(gridColor[0], gridColor[1], gridColor[2], alpha);
     stroke(linecol);
     strokeWeight(gridStrokeWeight);
-    // Calculate step size for rows and columns
-    let rowStep = img.height / gridRows;
-    let colStep = img.width / gridCols;
+    // Calculate grid area
+    let gridLeft = marginLeft;
+    let gridTop = marginTop;
+    let gridRight = img.width - marginRight;
+    let gridBottom = img.height - marginBottom;
+    let gridWidth = gridRight - gridLeft;
+    let gridHeight = gridBottom - gridTop;
+    let rowStep = gridHeight / gridRows;
+    let colStep = gridWidth / gridCols;
     // Draw vertical lines (columns)
-    for (let x = 0; x <= img.width; x += colStep) {
-      line(x, 0, x, img.height);
+    for (let x = gridLeft; x <= gridRight + 0.1; x += colStep) {
+      line(x, gridTop, x, gridBottom);
     }
     // Draw horizontal lines (rows)
-    for (let y = 0; y <= img.height; y += rowStep) {
-      line(0, y, img.width, y);
+    for (let y = gridTop; y <= gridBottom + 0.1; y += rowStep) {
+      line(gridLeft, y, gridRight, y);
     }
   }
 
