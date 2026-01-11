@@ -350,14 +350,24 @@ function setup() {
   saveButton.style.marginTop = '12px';
   saveButton.addEventListener('click', function() {
     // Create a graphics buffer to draw the image and grid
-    let pg = createGraphics(img.width, img.height);
-    pg.image(img, 0, 0);
+     // prompt the user for an image name
+    
+    //let gridSaved = false;
+    //let compositeSaved = false;
+    //while (!(gridSaved && compositeSaved)) {
+    let g_imgWithGrid = createGraphics(img.width, img.height);
+    g_imgWithGrid.image(img, 0, 0);
+
+    let g_grid = createGraphics(img.width, img.height);
+
+    // let g_grid = createGraphics(img.width, img.height);
+    //if(!compositeSaved) pg.image(img, 0, 0);
 
     // Draw grid on the graphics buffer with margins
     let alpha = Math.round(gridOpacity * 2.55); // map 0-100 to 0-255
-    let linecol = pg.color(gridColor[0], gridColor[1], gridColor[2], alpha);
-    pg.stroke(linecol);
-    pg.strokeWeight(gridStrokeWeight);
+    let linecol = g_grid.color(gridColor[0], gridColor[1], gridColor[2], alpha);
+    g_grid.stroke(linecol);
+    g_grid.strokeWeight(gridStrokeWeight);
     let gridLeft = marginLeft;
     let gridTop = marginTop;
     let gridRight = img.width - marginRight;
@@ -367,16 +377,29 @@ function setup() {
     let rowStep = gridHeight / gridRows;
     let colStep = gridWidth / gridCols;
     for (let x = gridLeft; x <= gridRight + 0.1; x += colStep) {
-      pg.line(x, gridTop, x, gridBottom);
+      g_grid.line(x, gridTop, x, gridBottom);
     }
     for (let y = gridTop; y <= gridBottom + 0.1; y += rowStep) {
-      pg.line(gridLeft, y, gridRight, y);
+      g_grid.line(gridLeft, y, gridRight, y);
     }
-
-    // prompt the user for an image name
-    let imageName = prompt("Enter image name:", "image_with_grid");
+    
+    
+    //if(!compositeSaved)
+    //{
     // Save the graphics buffer as an image
-    save(pg, imageName + '.png');
+      
+      //draw the grid onto the g_imgWithGrid graphics so it overlays the original image.
+
+      g_imgWithGrid.image(g_grid, 0, 0);
+      
+     let imageName = prompt("Enter image name:\n(a separate grid-only png will be saved also)", "img");
+      save(g_imgWithGrid, imageName + '.jpg');
+      //compositeSaved = true;
+    
+      save(g_grid, imageName + '_grid.png');
+      //gridSaved = true;
+
+    //} // end while (both not saved)
   });
   const dialogueBox = document.getElementById('dialogue-box');
   if (dialogueBox) {
@@ -512,8 +535,8 @@ function mousePressed() {
       mouseY + canvasBounds.top <= dialogue.getBoundingClientRect().bottom)
   ) {
     isDragging = true;
-    lastMouseX = mouseX;
-    lastMouseY = mouseY;
+    lastPointerX = mouseX;
+    lastPointerY = mouseY;
   }
 }
 
@@ -523,10 +546,40 @@ function mouseReleased() {
 
 function mouseDragged() {
   if (isDragging) {
-    offsetX += mouseX - lastMouseX;
-    offsetY += mouseY - lastMouseY;
-    lastMouseX = mouseX;
-    lastMouseY = mouseY;
+    offsetX += mouseX - lastPointerX;
+    offsetY += mouseY - lastPointerY;
+    lastPointerX = mouseX;
+    lastPointerY = mouseY;
   }
+
+// Touch support for single-finger drag
+function touchStarted() {
+  if (touches.length === 1) {
+    // Only start drag if touch is over the canvas
+    if (
+      touches[0].x >= 0 && touches[0].x <= width &&
+      touches[0].y >= 0 && touches[0].y <= height
+    ) {
+      isDragging = true;
+      lastPointerX = touches[0].x;
+      lastPointerY = touches[0].y;
+    }
+  }
+}
+
+function touchMoved() {
+  if (isDragging && touches.length === 1) {
+    offsetX += touches[0].x - lastPointerX;
+    offsetY += touches[0].y - lastPointerY;
+    lastPointerX = touches[0].x;
+    lastPointerY = touches[0].y;
+    // Prevent default scrolling
+    return false;
+  }
+}
+
+function touchEnded() {
+  isDragging = false;
+}
 }
 
