@@ -22,7 +22,11 @@
         margin: 0;
         padding: 0;
         overflow: auto;
-        touch-action: none; /* important for iOS pinch + pan */
+        touch-action: pan-x; /* important for iOS pinch + pan */
+      }
+      hr {
+        margin-top:16px;
+        margin-bottom:16px;
       }
       canvas {
         display: block;
@@ -30,56 +34,81 @@
         max-width: none;
         max-height: none;
       }
+      .visually-hidden {
+        display: none !important;
+      }
     </style>
  </head>
   <body>
     <div id="dialogue-box">
       <label for="image-loader" style="font-weight:600;">Load Image:</label>
       <input type="file" id="image-loader" accept="image/png, image/jpeg, image/jpg, image/gif" style="margin-bottom:12px; display:block;">
-      <label for="stroke-slider">Grid Stroke Weight:
+      <hr/>
+      <label style="font-weight:600;">Grid Settings: </label>
+      <label for="stroke-slider">Stroke Weight:
         <span class="slider-value" id="slider-value">3</span>
+        <button id="stroke-dec" type="button" style="margin-left:6px; padding:0 6px;">&lt;</button>
+        <button id="stroke-inc" type="button" style="margin-left:2px; padding:0 6px;">&gt;</button>
       </label>
-      <input type="range" min="1" max="6" value="3" id="stroke-slider" touch-action="pan-x">
-      <br><br>
-      <label for="rows-slider">Rows:
-        <span class="slider-value" id="rows-value">5</span>
-      </label>
-      <input type="range" touch-action="pan-x" min="1" max="20" step="1" value="5" id="rows-slider">
-      <br><br>
-      <label for="cols-slider">Columns:
-        <span class="slider-value" id="cols-value">5</span>
-      </label>
-      <input type="range" touch-action="pan-x" min="1" max="20" step="1" value="5" id="cols-slider">
-      <br><br>
-      <label for="opacity-slider">Grid Opacity:
-        <span class="slider-value" id="opacity-value">80</span>
-      </label>
-      <input type="range" touch-action="pan-x" min="0" max="100" value="80" id="opacity-slider">
-      <label for="margin-top-slider">Grid Margin Top:
-      <span class="slider-value" id="margin-top-value">0</span>
-      </label>
-      <input type="range" touch-action="pan-x" min="0" max="500" step="1" value="0" id="margin-top-slider">
+      <input type="range" min="1" max="6" value="3" id="stroke-slider" class="visually-hidden">
       <br>
-      <input type="checkbox" checked="true" id="link-margins-checkbox" style="margin-top:8px;">
-      <label for="link-margins-checkbox">Link margins</label>
-      <br><br>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <label for="rows-slider" style="margin-bottom:0;">Rows:
+          <span class="slider-value" id="rows-value">5</span>
+        </label>
+        <button id="rows-dec" type="button" style="margin-left:6px; padding:0 6px;">&lt;</button>
+        <button id="rows-inc" type="button" style="margin-left:2px; padding:0 6px;">&gt;</button>
+      </div>
+      <input type="range"  min="1" max="20" step="1" value="5" id="rows-slider"  class="visually-hidden">
+      <br>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <label for="cols-slider" style="margin-bottom:0;">Columns:
+          <span class="slider-value" id="cols-value">5</span>
+        </label>
+        <button id="cols-dec" type="button" style="margin-left:6px; padding:0 6px;">&lt;</button>
+        <button id="cols-inc" type="button" style="margin-left:2px; padding:0 6px;">&gt;</button>
+      </div>
+      <input type="range"  min="1" max="20" step="1" value="5" id="cols-slider"  class="visually-hidden">
+      <br>
+      <div style="display:flex; align-items:center; gap:8px; margin-top:8px;margin-bottom:8px;" id="color-picker-row">
+        <label for="grid-color-picker" style="margin-top:4px">Color:
+        </label>
+      </div>
+      <label for="opacity-slider" id="opacity-slider-label">Opacity:
+        <span class="slider-value" id="opacity-value">80</span>
+        <button id="opacity-dec" type="button" style="margin-left:6px; padding:0 6px;">&lt;</button>
+        <button id="opacity-inc" type="button" style="margin-left:2px; padding:0 6px;">&gt;</button>
+      </label>
+      <input type="range"  min="0" max="100" value="80" id="opacity-slider" class="visually-hidden">
+      <br>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <label for="margin-top-slider" style="margin-bottom:0;">Grid Margin Top:
+          <span class="slider-value" id="margin-top-value">0</span>
+        </label>
+        <button id="margin-top-dec" type="button" style="margin-left:6px; padding:0 6px;">&lt;</button>
+        <button id="margin-top-inc" type="button" style="margin-left:2px; padding:0 6px;">&gt;</button>
+      </div>
+      <input type="range"  min="0" max="500" step="1" value="0" id="margin-top-slider">
+      <br>
+      <label for="link-margins-checkbox">Link margins <input type="checkbox" checked="true" id="link-margins-checkbox" style="margin-top:8px;"></label>
+      
       <div id="margin-sliders-granular">
-        <label for="margin-left-slider">Grid Margin Left:
+        <label for="margin-left-slider">Margin Left:
           <span class="slider-value" id="margin-left-value">0</span>
         </label>
         <input type="range" min="0" max="500" value="0" id="margin-left-slider">
         <br><br>
-        <label for="margin-right-slider">Grid Margin Right:
+        <label for="margin-right-slider">Margin Right:
           <span class="slider-value" id="margin-right-value">0</span>
         </label>
         <input type="range" min="0" max="500" step="1" value="0" id="margin-right-slider">
         <br><br>
-        <label for="margin-bottom-slider">Grid Margin Bottom:
+        <label for="margin-bottom-slider">Margin Bottom:
           <span class="slider-value" id="margin-bottom-value">0</span>
         </label>
         <input type="range" min="0" max="500" step="1" value="0" id="margin-bottom-slider">
-        
       </div>
+      <hr/>
       <label style="font-weight:600;">Export Image: </label>
     </div>
   </body>

@@ -68,6 +68,8 @@ function setup() {
   // Setup stroke weight slider
   const slider = document.getElementById('stroke-slider');
   const sliderValue = document.getElementById('slider-value');
+  const strokeDec = document.getElementById('stroke-dec');
+  const strokeInc = document.getElementById('stroke-inc');
   if (slider && sliderValue) {
     slider.addEventListener('input', function() {
       gridStrokeWeight = parseInt(this.value);
@@ -89,6 +91,30 @@ function setup() {
         this.dispatchEvent(new Event('input', {bubbles: true}));
       }
     });
+    if (strokeDec) {
+      strokeDec.addEventListener('click', function() {
+        let val = parseInt(slider.value);
+        if (val > 1) {
+          val -= 1;
+          slider.value = val;
+          gridStrokeWeight = val;
+          sliderValue.textContent = val;
+          slider.dispatchEvent(new Event('input', {bubbles: true}));
+        }
+      });
+    }
+    if (strokeInc) {
+      strokeInc.addEventListener('click', function() {
+        let val = parseInt(slider.value);
+        if (val < 6) {
+          val += 1;
+          slider.value = val;
+          gridStrokeWeight = val;
+          sliderValue.textContent = val;
+          slider.dispatchEvent(new Event('input', {bubbles: true}));
+        }
+      });
+    }
     gridStrokeWeight = parseInt(slider.value);
     sliderValue.textContent = slider.value;
   }
@@ -116,6 +142,58 @@ function setup() {
         this.dispatchEvent(new Event('input', {bubbles: true}));
       }
     });
+    const colsDec = document.getElementById('cols-dec');
+    const colsInc = document.getElementById('cols-inc');
+    if (colsDec) {
+      colsDec.addEventListener('click', function() {
+        let val = parseInt(colsSlider.value);
+        if (val > 1) {
+          val -= 1;
+          colsSlider.value = val;
+          gridCols = val;
+          colsValue.textContent = val;
+          colsSlider.dispatchEvent(new Event('input', {bubbles: true}));
+        }
+      });
+    }
+    if (colsInc) {
+      colsInc.addEventListener('click', function() {
+        let val = parseInt(colsSlider.value);
+        if (val < 20) {
+          val += 1;
+          colsSlider.value = val;
+          gridCols = val;
+          colsValue.textContent = val;
+          colsSlider.dispatchEvent(new Event('input', {bubbles: true}));
+        }
+      });
+    }
+    const rowsDec = document.getElementById('rows-dec');
+    const rowsInc = document.getElementById('rows-inc');
+    if (rowsDec) {
+      rowsDec.addEventListener('click', function() {
+        let val = parseInt(rowsSlider.value);
+        if (val > 1) {
+          val -= 1;
+          rowsSlider.value = val;
+          gridRows = val;
+          rowsValue.textContent = val;
+          rowsSlider.dispatchEvent(new Event('input', {bubbles: true}));
+        }
+      });
+    }
+    if (rowsInc) {
+      rowsInc.addEventListener('click', function() {
+        let val = parseInt(rowsSlider.value);
+        if (val < 20) {
+          val += 1;
+          rowsSlider.value = val;
+          gridRows = val;
+          rowsValue.textContent = val;
+          rowsSlider.dispatchEvent(new Event('input', {bubbles: true}));
+        }
+      });
+    }
     gridCols = parseInt(colsSlider.value);
     colsValue.textContent = colsSlider.value;
 
@@ -150,12 +228,19 @@ function setup() {
 
     // Create color picker and insert above opacity slider
     gridColorPicker = createColorPicker(color(gridColor[0], gridColor[1], gridColor[2]));
-    gridColorPicker.parent('dialogue-box');
+    gridColorPicker.id('grid-color-picker');
+    gridColorPicker.style('display', 'inline');
+    
+    //gridColorPicker.parent('dialogue-box');
     // Move color picker above opacity slider
     const dialogueBox = document.getElementById('dialogue-box');
+    const colorPickerRow = document.getElementById('color-picker-row');
+    const gridColorCheckbox = document.getElementById('grid-color-checkbox');
     const opacitySlider = document.getElementById('opacity-slider');
-    if (dialogueBox && opacitySlider) {
-      dialogueBox.insertBefore(gridColorPicker.elt, opacitySlider.previousSibling);
+    if (colorPickerRow) {
+      //dialogueBox.insertBefore(gridColorPicker.elt, opacitySlider.previousSibling);
+      //dialogueBox.insertBefore(gridColorPicker.elt, gridColorCheckbox.previousSibling);
+      colorPickerRow.insertAdjacentElement('beforeend', gridColorPicker.elt);
     }
     gridColorPicker.input(function() {
       const c = gridColorPicker.color();
@@ -165,6 +250,8 @@ function setup() {
     // Setup opacity slider
     //const opacitySlider = document.getElementById('opacity-slider');
     const opacityValue = document.getElementById('opacity-value');
+    const opacityDec = document.getElementById('opacity-dec');
+    const opacityInc = document.getElementById('opacity-inc');
     if (opacitySlider && opacityValue) {
       opacitySlider.addEventListener('input', function() {
         gridOpacity = parseInt(this.value);
@@ -185,6 +272,26 @@ function setup() {
           this.dispatchEvent(new Event('input', {bubbles: true}));
         }
       });
+      if (opacityDec) {
+        opacityDec.addEventListener('click', function() {
+          let val = parseInt(opacitySlider.value);
+          val = Math.max(0, val - 10);
+          opacitySlider.value = val;
+          gridOpacity = val;
+          opacityValue.textContent = val;
+          opacitySlider.dispatchEvent(new Event('input', {bubbles: true}));
+        });
+      }
+      if (opacityInc) {
+        opacityInc.addEventListener('click', function() {
+          let val = parseInt(opacitySlider.value);
+          val = Math.min(100, val + 10);
+          opacitySlider.value = val;
+          gridOpacity = val;
+          opacityValue.textContent = val;
+          opacitySlider.dispatchEvent(new Event('input', {bubbles: true}));
+        });
+      }
       gridOpacity = parseInt(opacitySlider.value);
       opacityValue.textContent = opacitySlider.value;
     }
@@ -240,6 +347,44 @@ function setup() {
   }
 
   if (marginTopSlider && marginTopValue) {
+        const marginTopDec = document.getElementById('margin-top-dec');
+        const marginTopInc = document.getElementById('margin-top-inc');
+        function getMarginStep() {
+          if (img && img.height) {
+            return Math.max(1, Math.round(img.height * 0.02));
+          }
+          return 1;
+        }
+        if (marginTopDec) {
+          marginTopDec.addEventListener('click', function() {
+            let val = parseInt(marginTopSlider.value);
+            let step = getMarginStep();
+            val = Math.max(0, val - step);
+            marginTopSlider.value = val;
+            if (linkMarginsCheckbox && linkMarginsCheckbox.checked) {
+              setAllMargins(val);
+            } else {
+              marginTop = val;
+              marginTopValue.textContent = val;
+            }
+            marginTopSlider.dispatchEvent(new Event('input', {bubbles: true}));
+          });
+        }
+        if (marginTopInc) {
+          marginTopInc.addEventListener('click', function() {
+            let val = parseInt(marginTopSlider.value);
+            let step = getMarginStep();
+            val = Math.min(500, val + step);
+            marginTopSlider.value = val;
+            if (linkMarginsCheckbox && linkMarginsCheckbox.checked) {
+              setAllMargins(val);
+            } else {
+              marginTop = val;
+              marginTopValue.textContent = val;
+            }
+            marginTopSlider.dispatchEvent(new Event('input', {bubbles: true}));
+          });
+        }
     marginTopSlider.addEventListener('input', function() {
       if (linkMarginsCheckbox && linkMarginsCheckbox.checked) {
         setAllMargins(parseInt(this.value));
@@ -345,12 +490,23 @@ function setup() {
 
   // Add a save button here that allows the user to save the loaded image plus its grid overlay as a new image file.
   const saveButton = document.createElement('button');
-  saveButton.textContent = 'Save Image with Grid';
+  saveButton.textContent = 'Save Result (JPG)';
   saveButton.style.display = 'block';
   saveButton.style.marginTop = '12px';
+  const saveGridButton = document.createElement('button');
+  saveGridButton.textContent = 'Save Grid ONLY (PNG)';
+  saveGridButton.style.display = 'block';
+  saveGridButton.style.marginTop = '12px';
   saveButton.addEventListener('click', function() {
+    saveCanvas('composite', 'jpg');
+  });
+  saveGridButton.addEventListener('click', function() {
+    saveCanvas('grid_only', 'png');
+  });
+
+  function saveCanvas(content, ext) {
     // Create a graphics buffer to draw the image and grid
-     // prompt the user for an image name
+     
     
     //let gridSaved = false;
     //let compositeSaved = false;
@@ -382,28 +538,26 @@ function setup() {
     for (let y = gridTop; y <= gridBottom + 0.1; y += rowStep) {
       g_grid.line(gridLeft, y, gridRight, y);
     }
-    
-    
-    //if(!compositeSaved)
-    //{
-    // Save the graphics buffer as an image
-      
-      //draw the grid onto the g_imgWithGrid graphics so it overlays the original image.
 
-      g_imgWithGrid.image(g_grid, 0, 0);
+     // prompt the user for an image name 
+     let imageName = prompt("Enter image name:", "img");
       
-     let imageName = prompt("Enter image name:\n(a separate grid-only png will be saved also)", "img");
-      save(g_imgWithGrid, imageName + '.jpg');
-      //compositeSaved = true;
-    
-      save(g_grid, imageName + '_grid.png');
-      //gridSaved = true;
+     if(content=="composite") 
+      {
+        // overlay the grid on the original image.
+        g_imgWithGrid.image(g_grid, 0, 0);
+        save(g_imgWithGrid, imageName + '.jpg');
+      } else if(content=="grid_only") 
+      {
+        save(g_grid, imageName + '.png');
+      }
 
-    //} // end while (both not saved)
-  });
+  }
+
   const dialogueBox = document.getElementById('dialogue-box');
   if (dialogueBox) {
     dialogueBox.appendChild(saveButton);
+    dialogueBox.appendChild(saveGridButton);
   }
 }
 
