@@ -10,8 +10,8 @@ let lastPinchDist = null;
 let gridStrokeWeight = 3;
 let gridRows = 5;
 let gridCols = 5;
-let gridOpacity = 80; // 0-100 percent
-let gridColor = [255, 0, 255]; // default magenta
+let gridOpacity = 100; // 0-100 percent. Will initialize value from opacity slider in html.
+let gridColor = [244, 104, 208]; // default color (light pink)
 let gridColorPicker;
 
 // Margin variables (pixels)
@@ -23,7 +23,7 @@ let linkMargins = false;
   
 
 function preload() {
-  img = loadImage("haley_kick.jpg"); // put your image in the repo
+  img = loadImage("wes_gob.jpg"); // put your image in the repo
 }
 
 
